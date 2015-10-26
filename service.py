@@ -49,7 +49,7 @@ def Search(item):
                     sublist.append([a.contents[0].replace("\n",""),a.get('href')])
                 else:
                     first=1        
-        showlist(sublist)
+            showlist(sublist)
         else:
             notify(__language__(32002))
     else:
