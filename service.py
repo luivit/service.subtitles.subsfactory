@@ -56,6 +56,13 @@ def Search(item):
         notify(__language__(32001))
         log('Subsfactory only works with italian subs. Skipped')
 
+def checkexp(tvshow):
+    exp=[["Marvel's Agents of S.H.I.E.L.D.","Agents of Shield"],["Marvel's Daredevil","Daredevil","Marvel's Agent Carter","Agent Carter"]]
+    for expl in exp:
+        if tvshow == expl[0]:
+            return expl[1]
+    return tvshow
+
 def showlist(list):
     if xbmcvfs.exists(__temp__):
         shutil.rmtree(__temp__)
@@ -181,7 +188,7 @@ if params['action'] == 'search':
   item['title']              = normalizeString(xbmc.getInfoLabel("VideoPlayer.OriginalTitle")) # try to get original title
   item['file_original_path'] = urllib.unquote(xbmc.Player().getPlayingFile().decode('utf-8'))  # Full path of a playing file
   item['3let_language']      = []
-  
+  item['tvshow']=checkexp(item['tvshow'])
   for lang in urllib.unquote(params['languages']).decode('utf-8').split(","):
     item['3let_language'].append(xbmc.convertLanguage(lang,xbmc.ISO_639_2))
   
