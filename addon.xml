@@ -9,10 +9,10 @@
 	<summary lang="en">Subsfactory subtitle addon</summary>
 	<description lang="en">Find and download italian subtitles from subsfactory.it</description>
 	<summary lang="it">Addon sottotitoli Subsfactory</summary>
-    <description lang="it">Trova e scarica sottotitoli da subsfactory.it</description>
+	<description lang="it">Trova e scarica sottotitoli da subsfactory.it</description>
 	<language>it</language>
 	<website>http://www.subsfactory.it</website>
-    <source>https://github.com/luivit/service.subtitles.subsfactory</source> 
+	<source>https://github.com/luivit/service.subtitles.subsfactory</source> 
 	<email>luivit39@gmail.com</email>
 </extension>
 </addon>
