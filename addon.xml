@@ -12,7 +12,7 @@
     <description lang="it">Trova e scarica sottotitoli da subsfactory.it</description>
 	<language>it</language>
 	<website>http://www.subsfactory.it</website>
-    <source></source> 
+    <source>https://github.com/luivit/service.subtitles.subsfactory</source> 
 	<email>luivit39@gmail.com</email>
 </extension>
 </addon>
