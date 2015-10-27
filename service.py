@@ -39,17 +39,19 @@ def Search(item):
         urlsearch=urlsearch+eps
         page=urllib2.urlopen(urlsearch)
         html=BeautifulSoup(page)
-        tr=html.find(id="download-page").find('ul').find('table').find('tbody').find_all('tr')
-        if tr is not None:
-            sublist=[]
-            first=0
-            for td in tr:
-                if first!=0:
-                    a=td.find('td' ,class_='tdleft').find('a')
-                    sublist.append([a.contents[0].replace("\n",""),a.get('href')])
-                else:
-                    first=1        
-            showlist(sublist)
+        ul=html.find(id="download-page").find('ul')
+        if ul is not None:
+            tr=ul.find('table').find('tbody').find_all('tr')
+            if tr is not None:
+                sublist=[]
+                first=0
+                for td in tr:
+                    if first!=0:
+                        a=td.find('td' ,class_='tdleft').find('a')
+                        sublist.append([a.contents[0].replace("\n",""),a.get('href')])
+                    else:
+                        first=1
+                showlist(sublist)
         else:
             notify(__language__(32002))
     else:
