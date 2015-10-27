@@ -13,6 +13,7 @@ import xbmcplugin
 import shutil
 import unicodedata
 from bs4 import BeautifulSoup
+import re
 
 __addon__ = xbmcaddon.Addon()
 __author__     = __addon__.getAddonInfo('author')
@@ -213,6 +214,22 @@ if params['action'] == 'search':
     item['file_original_path'] = stackPath[0][8:]
   
   Search(item)  
+elif params['action'] == 'manualsearch':
+    res=re.findall('(.*?)(\d{1,3})x(\d{1,3})', urllib.unquote(params['searchstring']), re.IGNORECASE)
+    if res:
+        item = {}
+        item['tvshow']=res[0][0]
+        lres=len(item['tvshow'])
+        if item['tvshow'][lres-1:lres]!=" ":
+            item['tvshow']=item['tvshow']+" "
+        item['season']=res[0][1]
+        item['episode']=res[0][2]
+        item['3let_language']=[]
+        for lang in urllib.unquote(params['languages']).decode('utf-8').split(","):
+            item['3let_language'].append(xbmc.convertLanguage(lang,xbmc.ISO_639_2))
+        Search(item) 
+    else:
+        notify(__language__(32003))   
 elif params['action'] == 'download':
   ## we pickup all our arguments sent from def Search()
   subs = Download(params["file"],params["type"],params["si"])
