@@ -140,7 +140,7 @@ def showlist(list):
                     url = "plugin://%s/?action=download&file=%s&type=%s&si=%s" % (__scriptid__,file,"pack",si)
                     xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=url,listitem=listitem,isFolder=False)
             else:
-                listitem = xbmcgui.ListItem(label="Italian",label2=name,thumbnailImage='it')
+                listitem = xbmcgui.ListItem(label="Italian",label2=sub[0],thumbnailImage='it')
                 listitem.setProperty( "sync",'false')                
                 listitem.setProperty('hearing_imp', 'false') # set to "true" if subtitle is for hearing impared              
                 url = "plugin://%s/?action=download&file=%s&type=%s&si=no" % (__scriptid__,local_tmp_file,"unpack")
