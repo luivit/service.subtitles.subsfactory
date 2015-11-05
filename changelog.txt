@@ -1,3 +1,4 @@
+0.0.6
 - added new TV show exception
 - added forum link
 0.0.5
