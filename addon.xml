@@ -11,6 +11,7 @@
 	<summary lang="it">Addon sottotitoli Subsfactory</summary>
 	<description lang="it">Trova e scarica sottotitoli da subsfactory.it</description>
 	<language>it</language>
+	<license>GNU GENERAL PUBLIC LICENSE. Version 2, June 1991</license>
 	<website>http://www.subsfactory.it</website>
 	<forum>http://www.subsfactory.it/forum/index.php/topic,43243.0.html</forum>
 	<source>https://github.com/luivit/service.subtitles.subsfactory</source> 
