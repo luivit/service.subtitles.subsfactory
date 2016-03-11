@@ -174,9 +174,6 @@ def parseSearchString(str):
             item['tvshow']=item['tvshow']+" "
         item['season']=res[0][1]
         item['episode']=res[0][2]
-        item['3let_language']=[]
-        for lang in urllib.unquote(params['languages']).decode('utf-8').split(","):
-            item['3let_language'].append(xbmc.convertLanguage(lang,xbmc.ISO_639_2))
     return item
 
 def get_params():
@@ -211,41 +208,34 @@ if params['action'] == 'search':
   item['tvshow']             = normalizeString(xbmc.getInfoLabel("VideoPlayer.TVshowtitle"))   # Show
   item['title']              = normalizeString(xbmc.getInfoLabel("VideoPlayer.OriginalTitle")) # try to get original title
   item['file_original_path'] = urllib.unquote(xbmc.Player().getPlayingFile().decode('utf-8'))  # Full path of a playing file
-  item['3let_language']      = []
   item['tvshow']=checkexp(item['tvshow'])
-  for lang in urllib.unquote(params['languages']).decode('utf-8').split(","):
-    item['3let_language'].append(xbmc.convertLanguage(lang,xbmc.ISO_639_2))
-
-  if item['title'] == "":
+  
+  langstring = urllib.unquote(params['languages']).decode('utf-8')
+  item['3let_language'] = [xbmc.convertLanguage(lang,xbmc.ISO_639_2) for lang in langstring.split(",")]
+        
+  if not item['title']:
     item['title']  = normalizeString(xbmc.getInfoLabel("VideoPlayer.Title"))      # no original title, get just Title
-    toParse = item['title'].lower().replace('.', " ");
-    res=re.findall('(.*?)s?0?(\d{1,3})x?e?0?(\d{1,3})', urllib.unquote(toParse), re.IGNORECASE)
-    if res:
-        item['tvshow']=res[0][0]
-        lres=len(item['tvshow'])
-        if item['tvshow'][lres-1:lres]!=" ":
-            item['tvshow']=item['tvshow']+" "
-        item['season']=res[0][1]
-        item['episode']=res[0][2]
-        item['3let_language']=[]
-        for lang in urllib.unquote(params['languages']).decode('utf-8').split(","):
-            item['3let_language'].append(xbmc.convertLanguage(lang,xbmc.ISO_639_2))
-        Search(item)
+    toParse = item['title'].lower().replace('.', " ")
+    infoFromTitle = parseSearchString(toParse)
+    if infoFromTitle:
+        item['tvshow'] = infoFromTitle['tvshow']
+        item['season']= infoFromTitle['season']
+        item['episode']= infoFromTitle['episode']
     else:
         notify(__language__(32003))
 
-  if item['episode'].lower().find("s") > -1:                                      # Check if season is "Special"
-    item['season'] = "0"                                                          #
+  if "s" in item['episode'].lower():                                      # Check if season is "Special"
+    item['season'] = "0"
     item['episode'] = item['episode'][-1:]
 
-  if ( item['file_original_path'].find("http") > -1 ):
+  if "http" in item['file_original_path']:
     item['temp'] = True
 
-  elif ( item['file_original_path'].find("rar://") > -1 ):
+  elif "rar://" in item['file_original_path']:
     item['rar']  = True
     item['file_original_path'] = os.path.dirname(item['file_original_path'][6:])
 
-  elif ( item['file_original_path'].find("stack://") > -1 ):
+  elif "stack://" in item['file_original_path']:
     stackPath = item['file_original_path'].split(" , ")
     item['file_original_path'] = stackPath[0][8:]
 
@@ -254,6 +244,8 @@ if params['action'] == 'search':
 elif params['action'] == 'manualsearch':
     item = parseSearchString(params['searchstring'])
     if item:
+        langstring = urllib.unquote(params['languages']).decode('utf-8')
+        item['3let_language'] = [xbmc.convertLanguage(lang,xbmc.ISO_639_2) for lang in langstring.split(",")]
         Search(item)
     else:
         notify(__language__(32003))
@@ -264,6 +256,5 @@ elif params['action'] == 'download':
   for sub in subs:
     listitem = xbmcgui.ListItem(label=sub)
     xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=sub,listitem=listitem,isFolder=False)
-
 
 xbmcplugin.endOfDirectory(int(sys.argv[1])) ## send end of directory to XBMC
