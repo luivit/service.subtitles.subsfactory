@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 
 import os
 import sys
@@ -136,14 +136,14 @@ def showlist(list):
                     filen=filen.replace("."," ")
                     filen=filen.replace("_"," ")
                     listitem = xbmcgui.ListItem(label="Italian",label2=filen,thumbnailImage='it')
-                    listitem.setProperty( "sync",'false')                
-                    listitem.setProperty('hearing_imp', 'false') # set to "true" if subtitle is for hearing impared              
+                    listitem.setProperty( "sync",'false')
+                    listitem.setProperty('hearing_imp', 'false') # set to "true" if subtitle is for hearing impared
                     url = "plugin://%s/?action=download&file=%s&type=%s&si=%s" % (__scriptid__,file,"pack",si)
                     xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=url,listitem=listitem,isFolder=False)
             else:
                 listitem = xbmcgui.ListItem(label="Italian",label2=sub[0],thumbnailImage='it')
-                listitem.setProperty( "sync",'false')                
-                listitem.setProperty('hearing_imp', 'false') # set to "true" if subtitle is for hearing impared              
+                listitem.setProperty( "sync",'false')
+                listitem.setProperty('hearing_imp', 'false') # set to "true" if subtitle is for hearing impared
                 url = "plugin://%s/?action=download&file=%s&type=%s&si=no" % (__scriptid__,local_tmp_file,"unpack")
                 xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=url,listitem=listitem,isFolder=False)
         i=i+1
@@ -152,18 +152,33 @@ def Download(link,type,si):
     subtitle_list=[]
     if type=="pack" and si!="no":
         dirtemp=__temp__ +"unpack"+si+"\\"
-        link=dirtemp+link      
+        link=dirtemp+link
     subtitle_list.append(link)
     return subtitle_list
 
 def notify(msg):
-    xbmc.executebuiltin((u'Notification(%s,%s)' % (__scriptname__ , msg)).encode('utf-8')) 
+    xbmc.executebuiltin((u'Notification(%s,%s)' % (__scriptname__ , msg)).encode('utf-8'))
 
 def normalizeString(str):
   return unicodedata.normalize(
          'NFKD', unicode(unicode(str, 'utf-8'))
-         ).encode('ascii','ignore')    
- 
+         ).encode('ascii','ignore')
+
+def parseSearchString(str):
+    res=re.findall('(.*?)s?0?(\d{1,3})x?e?0?(\d{1,3})', urllib.unquote(str), re.IGNORECASE)
+    item={}
+    if res:
+        item['tvshow']=res[0][0]
+        lres=len(item['tvshow'])
+        if item['tvshow'][lres-1:lres]!=" ":
+            item['tvshow']=item['tvshow']+" "
+        item['season']=res[0][1]
+        item['episode']=res[0][2]
+        item['3let_language']=[]
+        for lang in urllib.unquote(params['languages']).decode('utf-8').split(","):
+            item['3let_language'].append(xbmc.convertLanguage(lang,xbmc.ISO_639_2))
+    return item
+
 def get_params():
   param=[]
   paramstring=sys.argv[2]
@@ -186,7 +201,6 @@ params = get_params()
 
 print params
 
-
 if params['action'] == 'search':
   item = {}
   item['temp']               = False
@@ -201,14 +215,29 @@ if params['action'] == 'search':
   item['tvshow']=checkexp(item['tvshow'])
   for lang in urllib.unquote(params['languages']).decode('utf-8').split(","):
     item['3let_language'].append(xbmc.convertLanguage(lang,xbmc.ISO_639_2))
-  
+
   if item['title'] == "":
     item['title']  = normalizeString(xbmc.getInfoLabel("VideoPlayer.Title"))      # no original title, get just Title
-    
+    toParse = item['title'].lower().replace('.', " ");
+    res=re.findall('(.*?)s?0?(\d{1,3})x?e?0?(\d{1,3})', urllib.unquote(toParse), re.IGNORECASE)
+    if res:
+        item['tvshow']=res[0][0]
+        lres=len(item['tvshow'])
+        if item['tvshow'][lres-1:lres]!=" ":
+            item['tvshow']=item['tvshow']+" "
+        item['season']=res[0][1]
+        item['episode']=res[0][2]
+        item['3let_language']=[]
+        for lang in urllib.unquote(params['languages']).decode('utf-8').split(","):
+            item['3let_language'].append(xbmc.convertLanguage(lang,xbmc.ISO_639_2))
+        Search(item)
+    else:
+        notify(__language__(32003))
+
   if item['episode'].lower().find("s") > -1:                                      # Check if season is "Special"
     item['season'] = "0"                                                          #
     item['episode'] = item['episode'][-1:]
-  
+
   if ( item['file_original_path'].find("http") > -1 ):
     item['temp'] = True
 
@@ -219,24 +248,15 @@ if params['action'] == 'search':
   elif ( item['file_original_path'].find("stack://") > -1 ):
     stackPath = item['file_original_path'].split(" , ")
     item['file_original_path'] = stackPath[0][8:]
-  
-  Search(item)  
+
+  Search(item)
+
 elif params['action'] == 'manualsearch':
-    res=re.findall('(.*?)(\d{1,3})x(\d{1,3})', urllib.unquote(params['searchstring']), re.IGNORECASE)
-    if res:
-        item = {}
-        item['tvshow']=res[0][0]
-        lres=len(item['tvshow'])
-        if item['tvshow'][lres-1:lres]!=" ":
-            item['tvshow']=item['tvshow']+" "
-        item['season']=res[0][1]
-        item['episode']=res[0][2]
-        item['3let_language']=[]
-        for lang in urllib.unquote(params['languages']).decode('utf-8').split(","):
-            item['3let_language'].append(xbmc.convertLanguage(lang,xbmc.ISO_639_2))
-        Search(item) 
+    item = parseSearchString(params['searchstring'])
+    if item:
+        Search(item)
     else:
-        notify(__language__(32003))   
+        notify(__language__(32003))
 elif params['action'] == 'download':
   ## we pickup all our arguments sent from def Search()
   subs = Download(params["file"],params["type"],params["si"])
@@ -244,16 +264,6 @@ elif params['action'] == 'download':
   for sub in subs:
     listitem = xbmcgui.ListItem(label=sub)
     xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=sub,listitem=listitem,isFolder=False)
-  
-  
+
+
 xbmcplugin.endOfDirectory(int(sys.argv[1])) ## send end of directory to XBMC
-  
-  
-  
-  
-  
-  
-  
-  
-  
-    
