@@ -129,17 +129,16 @@ def showlist(list):
                 xbmc.executebuiltin(('XBMC.Extract(' + local_tmp_file + ',' + dirtemp +')').encode('utf-8'), True)
                 dirs = os.listdir(dirtemp)
                 for file in dirs:
-                    filen=file.replace(".srt","")
-                    filen=filen.replace("sub.ita","")
-                    filen=filen.replace("subsfactory","")
-                    filen=filen.replace("Subsfactory","")
-                    filen=filen.replace("."," ")
-                    filen=filen.replace("_"," ")
-                    listitem = xbmcgui.ListItem(label="Italian",label2=filen,thumbnailImage='it')
-                    listitem.setProperty( "sync",'false')
-                    listitem.setProperty('hearing_imp', 'false') # set to "true" if subtitle is for hearing impared
-                    url = "plugin://%s/?action=download&file=%s&type=%s&si=%s" % (__scriptid__,file,"pack",si)
-                    xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=url,listitem=listitem,isFolder=False)
+                    if (os.path.isdir(dirtemp+"\\"+file)):
+                        dirs_rec = os.listdir(dirtemp+"\\"+file)
+                        for file_rec in dirs_rec:
+                            filen=clean_name(file_rec)
+                            url = "plugin://%s/?action=download&file=%s&type=%s&si=%s" % (__scriptid__,file+"\\"+file_rec,"pack",si)
+                            xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=url,listitem=make_listItem(filen),isFolder=False)
+                    else:
+                        filen=clean_name(file)
+                        url = "plugin://%s/?action=download&file=%s&type=%s&si=%s" % (__scriptid__,file,"pack",si)
+                        xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=url,listitem=make_listItem(filen),isFolder=False)
             else:
                 url = "plugin://%s/?action=download&file=%s&type=%s&si=no" % (__scriptid__,local_tmp_file,"unpack")
                 xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=url,listitem=make_listItem(sub[0]),isFolder=False)
