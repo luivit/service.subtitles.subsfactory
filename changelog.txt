@@ -1,3 +1,4 @@
+- general bugfix
 1.0.0 (2016-01-23)
 - updated xbmc.python version
 - updated layout language

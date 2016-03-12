@@ -120,7 +120,7 @@ def showlist(list):
             if packed:
                 xbmc.sleep(500)
                 dirtemp=__temp__ +"unpack"+si
-                log("dirtemp %s "%dirtemp)
+                #log("dirtemp %s "%dirtemp)
                 if not os.path.exists(dirtemp):
                     os.makedirs(dirtemp)
                 else:
@@ -141,12 +141,24 @@ def showlist(list):
                     url = "plugin://%s/?action=download&file=%s&type=%s&si=%s" % (__scriptid__,file,"pack",si)
                     xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=url,listitem=listitem,isFolder=False)
             else:
-                listitem = xbmcgui.ListItem(label="Italian",label2=sub[0],thumbnailImage='it')
-                listitem.setProperty( "sync",'false')
-                listitem.setProperty('hearing_imp', 'false') # set to "true" if subtitle is for hearing impared
                 url = "plugin://%s/?action=download&file=%s&type=%s&si=no" % (__scriptid__,local_tmp_file,"unpack")
-                xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=url,listitem=listitem,isFolder=False)
+                xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=url,listitem=make_listItem(sub[0]),isFolder=False)
         i=i+1
+
+def make_listItem(filen):
+    listitem = xbmcgui.ListItem(label="Italian",label2=filen,thumbnailImage='it')
+    listitem.setProperty( "sync",'false')
+    listitem.setProperty('hearing_imp', 'false')
+    return listitem
+
+def clean_name(file):
+    filen=file.replace(".srt","")
+    filen=filen.replace("sub.ita","")
+    filen=filen.replace("subsfactory","")
+    filen=filen.replace("Subsfactory","")
+    filen=filen.replace("."," ")
+    filen=filen.replace("_"," ")
+    return filen
 
 def Download(link,type,si):
     subtitle_list=[]
@@ -169,6 +181,7 @@ def parseSearchString(str):
     item={}
     if res:
         item['tvshow']=res[0][0]
+        item['tvshow']=checkexp(item['tvshow'])
         lres=len(item['tvshow'])
         if item['tvshow'][lres-1:lres]!=" ":
             item['tvshow']=item['tvshow']+" "
@@ -200,14 +213,10 @@ print params
 
 if params['action'] == 'search':
   item = {}
-  item['temp']               = False
-  item['rar']                = False
-  item['year']               = xbmc.getInfoLabel("VideoPlayer.Year")                           # Year
   item['season']             = str(xbmc.getInfoLabel("VideoPlayer.Season"))                    # Season
   item['episode']            = str(xbmc.getInfoLabel("VideoPlayer.Episode"))                   # Episode
   item['tvshow']             = normalizeString(xbmc.getInfoLabel("VideoPlayer.TVshowtitle"))   # Show
   item['title']              = normalizeString(xbmc.getInfoLabel("VideoPlayer.OriginalTitle")) # try to get original title
-  item['file_original_path'] = urllib.unquote(xbmc.Player().getPlayingFile().decode('utf-8'))  # Full path of a playing file
   item['tvshow']=checkexp(item['tvshow'])
   
   langstring = urllib.unquote(params['languages']).decode('utf-8')
@@ -227,17 +236,6 @@ if params['action'] == 'search':
   if "s" in item['episode'].lower():                                      # Check if season is "Special"
     item['season'] = "0"
     item['episode'] = item['episode'][-1:]
-
-  if "http" in item['file_original_path']:
-    item['temp'] = True
-
-  elif "rar://" in item['file_original_path']:
-    item['rar']  = True
-    item['file_original_path'] = os.path.dirname(item['file_original_path'][6:])
-
-  elif "stack://" in item['file_original_path']:
-    stackPath = item['file_original_path'].split(" , ")
-    item['file_original_path'] = stackPath[0][8:]
 
   Search(item)
 
