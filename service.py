@@ -165,7 +165,7 @@ def normalizeString(str):
          ).encode('ascii','ignore')
 
 def parseSearchString(str):
-    res=re.findall('(.*?)s?0?(\d{1,3})x?e?0?(\d{1,3})', urllib.unquote(str), re.IGNORECASE)
+    res=re.findall('(.*\d*?) s?0?(\d{1,3})x?e?0?(\d{1,3})', urllib.unquote(str), re.IGNORECASE)
     item={}
     if res:
         item['tvshow']=res[0][0]
