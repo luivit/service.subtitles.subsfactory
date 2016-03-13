@@ -215,13 +215,12 @@ if params['action'] == 'search':
   item['season']             = str(xbmc.getInfoLabel("VideoPlayer.Season"))                    # Season
   item['episode']            = str(xbmc.getInfoLabel("VideoPlayer.Episode"))                   # Episode
   item['tvshow']             = normalizeString(xbmc.getInfoLabel("VideoPlayer.TVshowtitle"))   # Show
-  item['title']              = normalizeString(xbmc.getInfoLabel("VideoPlayer.OriginalTitle")) # try to get original title
   item['tvshow']=checkexp(item['tvshow'])
   
   langstring = urllib.unquote(params['languages']).decode('utf-8')
   item['3let_language'] = [xbmc.convertLanguage(lang,xbmc.ISO_639_2) for lang in langstring.split(",")]
         
-  if not item['title']:
+  if not item['tvshow']:
     item['title']  = normalizeString(xbmc.getInfoLabel("VideoPlayer.Title"))      # no original title, get just Title
     toParse = item['title'].lower().replace('.', " ")
     infoFromTitle = parseSearchString(toParse)
