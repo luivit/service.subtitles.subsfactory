@@ -32,6 +32,7 @@ sys.path.append (__resource__)
 def Search(item):
     if 'ita' in item['3let_language'] and item['tvshow']:
         urlsearch="http://www.subsfactory.it/archivio/?download_search="
+        home="http://www.subsfactory.it"
         urlsearch=urlsearch+item['tvshow'].replace(" ","+")+"+"+str(item['season'])+"x"
         if len(item['episode'])==1:
             eps="0"+str(item['episode'])
@@ -49,7 +50,7 @@ def Search(item):
                 for td in tr:
                     if first!=0:
                         a=td.find('td' ,class_='tdleft').find('a')
-                        sublist.append([a.contents[0].replace("\n",""),a.get('href')])
+                        sublist.append([a.contents[0].replace("\n",""),home+a.get('href')])
                     else:
                         first=1
                 showlist(sublist)
@@ -67,7 +68,8 @@ def checkexp(tvshow):
          ["Doctor Who (2005)","Doctor Who"],
          ["NCIS: Los Angeles","NCIS Los Angeles"],
          ["Castle (2009)","Castle"],
-         ["Marvel's Jessica Jones","Jessica Jones"]]
+         ["Marvel's Jessica Jones","Jessica Jones"],
+         ["The Flash (2014)","The Flash"]]
     for expl in exp:
         if tvshow == expl[0]:
             return expl[1]

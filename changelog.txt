@@ -1,3 +1,4 @@
+- bugfix download link
 1.0.1 (2016-03-12)
 - added support for automatic search of videos without title metadata (thx emavgl)
 - fixed to show files in subdirectory in zip file downloaded
