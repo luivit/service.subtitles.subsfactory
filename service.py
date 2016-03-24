@@ -78,9 +78,9 @@ def checkexp(tvshow):
 def showlist(list):
     if xbmcvfs.exists(__temp__):
         shutil.rmtree(__temp__)
-        log("elimino temp")
+        #log("elimino temp")
     xbmcvfs.mkdirs(__temp__)
-    log("ricreo temp")
+    #log("ricreo temp")
     i=0
     for sub in list:
         log("Fetching subtitles using url %s" % sub[1])
@@ -134,11 +134,11 @@ def showlist(list):
                     if (os.path.isdir(dirtemp+"\\"+file)):
                         dirs_rec = os.listdir(dirtemp+"\\"+file)
                         for file_rec in dirs_rec:
-                            filen=clean_name(file_rec)
+                            filen=cleanName(file_rec)
                             url = "plugin://%s/?action=download&file=%s&type=%s&si=%s" % (__scriptid__,file+"\\"+file_rec,"pack",si)
                             xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=url,listitem=make_listItem(filen),isFolder=False)
                     else:
-                        filen=clean_name(file)
+                        filen=cleanName(file)
                         url = "plugin://%s/?action=download&file=%s&type=%s&si=%s" % (__scriptid__,file,"pack",si)
                         xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=url,listitem=make_listItem(filen),isFolder=False)
             else:
@@ -152,7 +152,7 @@ def make_listItem(filen):
     listitem.setProperty('hearing_imp', 'false')
     return listitem
 
-def clean_name(file):
+def cleanName(file):
     filen=file.replace(".srt","")
     filen=filen.replace("sub.ita","")
     filen=filen.replace("subsfactory","")
@@ -209,8 +209,6 @@ def get_params():
   return param
 
 params = get_params()
-
-print params
 
 if params['action'] == 'search':
   item = {}
