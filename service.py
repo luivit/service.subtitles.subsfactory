@@ -19,7 +19,6 @@ addon = xbmcaddon.Addon()
 scriptid   = addon.getAddonInfo('id')
 scriptname = addon.getAddonInfo('name')
 language   = addon.getLocalizedString
-cwd        = xbmc.translatePath( addon.getAddonInfo('path') ).decode("utf-8")
 profile    = xbmc.translatePath( addon.getAddonInfo('profile') ).decode("utf-8")
 temp       = xbmc.translatePath( os.path.join( profile, 'temp','') ).decode("utf-8")
 
@@ -159,7 +158,7 @@ def cleanName(file):
 def Download(link,type,si):
     subtitle_list=[]
     if type=="pack" and si!="no":
-        dirtemp=temp +"unpack"+si+"\\"
+        dirtemp=temp+"unpack"+si+"\\"
         link=os.path.join(dirtemp,link)
     subtitle_list.append(link)
     return subtitle_list
