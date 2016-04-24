@@ -115,6 +115,7 @@ def showlist(list):
                 return []
             if packed:
                 xbmc.sleep(500)
+                dirtemp=temp+"unpack"+si
                 #log("dirtemp %s "%dirtemp)
                 if not os.path.exists(dirtemp):
                     os.makedirs(dirtemp)
